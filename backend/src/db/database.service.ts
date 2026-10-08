@@ -21,7 +21,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     const uri = this.configService.getOrThrow<string>('MONGO_DB_URI');
 
     try {
-      this.client = new MongoClient(uri);
+      this.client = new MongoClient(uri, {
+        serverSelectionTimeoutMS: 10000,
+      });
 
       await this.client.connect();
 
@@ -31,7 +33,12 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
       this.logger.log('Successfully connected to MongoDB');
     } catch (error) {
-      this.logger.error('Failed to connect to MongoDB during startup: ', error);
+      this.logger.error(
+        'Failed to connect to MongoDB during startup',
+        error instanceof Error ? error.stack : String(error),
+      );
+
+      throw error;
     }
   }
 
