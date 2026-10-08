@@ -60,4 +60,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   getDb(): Db {
     return this.db;
   }
+
+  collection<T extends object>(name: string) {
+    return this.db.collection<T>(name);
+  }
 }
